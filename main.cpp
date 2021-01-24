@@ -7,16 +7,21 @@
 #include <iostream>
 
 using namespace std;
+
+vector <Pieza> piezas;
+
 int main(int argc, char *argv[])
 {
-    /*
+
     QApplication a(argc, argv);
     MainWindow w;
     w.show();
-    */
+    return a.exec();
 
 
 
+
+/*
 
     vector <char> id ={'R','E','C','B','M','S'};
     //vector <int> id ={1,2,};
@@ -86,8 +91,17 @@ int main(int argc, char *argv[])
 
     vector <Pieza> vp_o = vp_ord(vp);
 
-    calc_MRP(vp_o);
+    vector <Pieza> v_res;
 
+    v_res = calc_MRP(vp_o);
 
-    //return a.exec();
+    for (auto i = v_res.begin(); i !=v_res.end(); ++i) {
+        for (auto j = (*i).LPP.begin(); j !=(*i).LPP.end(); ++j) {
+            cout<<*j<<"  ";
+        }
+        cout<<endl;
+    }
+*/
+
+   //
 }

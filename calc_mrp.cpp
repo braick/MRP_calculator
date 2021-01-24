@@ -123,13 +123,23 @@ std::vector<int> sumVect(std::vector <int> v1, std::vector <int> v2, int fact){
 
 
 //recibe el vector de onjetos pieza piezas
-void calc_MRP(std::vector<Pieza> v_piezas){
+std::vector<Pieza> calc_MRP(std::vector<Pieza> v_piezas){
 
+    ////CALCULO DEL HORIZONTE DE PLANIFICACION COMO EL MAXIMO DE PERIODOS DE LPP
+    int n_per = 1;
 
-    int n_per = 6;
-    ////Que pieza hacer primero
-    /// En este punto ya tengo todas las piezas con su parametro en vector
-    /// que coño hago ahora
+    for (auto i = v_piezas.begin(); i !=v_piezas.end(); ++i) {
+        int aux = 10;
+        for (auto j = (*i).LPP.rbegin(); j !=(*i).LPP.rend(); ++j) {
+            if ((*j)!=0) {
+                if (aux>n_per) {
+                    n_per=aux;
+                }
+            }
+            aux--;
+        }
+    }
+
 
 
     ///Insertar 10 ceros al principio de todos los elementos de los objetos
@@ -151,9 +161,7 @@ void calc_MRP(std::vector<Pieza> v_piezas){
     for (auto p = v_piezas.begin(); p!=v_piezas.end(); ++p) {
 
 
-        //calculo de las necesidades brutas de los productos
-
-
+        ////calculo de las necesidades brutas de los productos
         std::vector <int> NBi = (*p).LPP;
         cout<<(*p).id<<endl;
         if (!(*p).Dep_pieza.empty()) {
@@ -178,6 +186,9 @@ void calc_MRP(std::vector<Pieza> v_piezas){
              D =D+NBi.at(i)-(*p).Di.at(i)-(*p).RPi.at(i);
          }
         ////////////
+
+
+
        //iterar a lo largo del producto
         for (int i =0; i < NBi.size()-1; ++i) {
            int NN = 0;
@@ -259,7 +270,7 @@ void calc_MRP(std::vector<Pieza> v_piezas){
            (*p).LPP=RPPi;
 
         }
-
+    /*
     int cont=-10;
     int a= 2;
     for (auto r = v_piezas.at(a).LPP.begin(); r != v_piezas.at(a).LPP.end(); ++r) {
@@ -268,11 +279,13 @@ void calc_MRP(std::vector<Pieza> v_piezas){
     }
 
     cout<<v_piezas.at(a).id<<endl;
+
+    */
 /*
     for (int i = 0; i < 5; ++i) {
         cout<<v_piezas.at(i).id<<endl;
     }*/
 
-
+    return v_piezas;
 
 }
