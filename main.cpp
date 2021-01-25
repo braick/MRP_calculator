@@ -20,8 +20,8 @@ int main(int argc, char *argv[])
 
 
 
-
 /*
+
 
     vector <char> id ={'R','E','C','B','M','S'};
     //vector <int> id ={1,2,};
@@ -95,6 +95,19 @@ int main(int argc, char *argv[])
 
     v_res = calc_MRP(vp_o);
 
+    vector <vector <int>> LP_mat;
+
+
+
+
+    for (auto i = LLP_mat.begin(); i !=LLP_mat.end(); ++i) {
+        for (auto j = (*i).begin(); j !=(*i).end(); ++j) {
+            cout<<*j<<"  ";
+        }
+        cout<<endl;
+    }
+*/
+/*
     for (auto i = v_res.begin(); i !=v_res.end(); ++i) {
         for (auto j = (*i).LPP.begin(); j !=(*i).LPP.end(); ++j) {
             cout<<*j<<"  ";

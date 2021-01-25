@@ -14,6 +14,9 @@ MainWindow::MainWindow(QWidget *parent)//constructor
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->table->setVisible(false);
+    resetValues();
+    ui->pushButton->setVisible(false);
 }
 
 MainWindow::~MainWindow()//destructor
@@ -185,10 +188,10 @@ void MainWindow::on_newP_clicked()
 
 
        ////// DEPURACION DE ERRORES ANTES DE VOLCAR EL ELEMENTO EN EL VECTOR
-        static int c = 1;//contador de piezas introducidas
+        //static int this->c_piezas = 1;//contador de piezas introducidas
 
         //// Commprobacion de dependecias resueltas
-        if (c>1){
+        if (this->c_piezas>0){
 
             for (auto i = Dep_pieza.begin(); i !=Dep_pieza.end(); ++i) {//recorre el vector de dependecias
 
@@ -234,10 +237,11 @@ void MainWindow::on_newP_clicked()
        //static vector<Pieza> vp;
 
        if (valid) {
-            c++;
+            this->c_piezas++;
+            ui->contadorP->setText(QString::number(this->c_piezas));
             (this->vp).push_back(Pieza(id,LPP,RPi,Di,SS,selec_TL,tSum,pDef,Dep_pieza,cant_Dep_pieza,S,H,v_poliv));
             ui->dialog->setText("Pieza añadida");
-            resetValues();
+
 
 
        }else{
@@ -260,8 +264,9 @@ void MainWindow::on_calculate_clicked()
 
     if((this->vp).size()>1){
         vector <Pieza> v_solved;
-
+        /////////////////////////////
         v_solved = calc_MRP(this->vp);
+        /////////////////////////////Output por consola
 
         for (auto i = v_solved.begin(); i !=v_solved.end(); ++i) {
             for (auto j = (*i).LPP.begin(); j !=(*i).LPP.end(); ++j) {
@@ -269,6 +274,55 @@ void MainWindow::on_calculate_clicked()
             }
             cout<<endl;
         }
+        ///////////////////////////////
+
+        ui->table->setVisible(true);
+        ui->table->setRowCount(v_solved.size());
+        ui->table->setColumnCount(v_solved.begin()->LPP.size());
+        ui->table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+        //int per = -10;
+        int _i = 0;
+        int _j = 0;
+
+
+        for (int i = 0; i < v_solved.size(); ++i) {
+
+            QTableWidgetItem *p; //= ui->table->item(i, j);
+            p = new QTableWidgetItem;
+            QString s;
+            s.append(v_solved.at(i).id);
+            p->setText(s);
+            ui->table->setVerticalHeaderItem(i,p);
+
+            for (int j = 0; j < v_solved.at(i).LPP.size(); ++j) {
+
+                        QTableWidgetItem *pCell;
+                        pCell = new QTableWidgetItem;
+                        pCell->setText(QString::number(v_solved.at(i).LPP.at(j)));
+
+                        ui->table->setItem(i, j, pCell);
+            }
+        }
+
+
+        int per = -10;
+        for (int var = 0; var < v_solved.begin()->LPP.size(); ++var) {
+
+            if (per==0) {
+                per++;
+            }
+
+
+            QTableWidgetItem *p; //= ui->table->item(i, j);
+            p = new QTableWidgetItem;
+            p->setText(QString::number(per));
+            ui->table->setHorizontalHeaderItem(var,p);
+            ui->table->setColumnWidth(var,50);
+            per++;
+
+        }
+
 
 
 
@@ -276,5 +330,190 @@ void MainWindow::on_calculate_clicked()
         ui->dialog->setText("Solo una pieza introducida.\n No se puede calcular.");
     }
 
+
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+
+
+
+
+    vector <char> id ={'R','E','C','B','M','S'};
+    //vector <int> id ={1,2,};
+    vector<vector <int>> NBi = {
+        {0,0,400,0,4000,1000,0,0,0,0},
+        {3000,0,4000,3000,4000,0,0,0,0,0},
+        {3000,0,4000,3000,4000,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0},
+
+    };
+    vector<vector <int>> Rpi = {
+        {0,0,0,0,0,0,0,0,0,0},
+        {4000,0,0,0,0,0,0,0,0,0},
+        {4500,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0},
+
+
+                               };
+    vector <int> Di = {500,100,500,2000,200,150};
+
+    vector <int> SS = {500,100,500,1000,100,100};
+
+    vector <int> tSum = {1,1,1,1,1,1};
+    vector <int> pDef ={0,0,0,20,0,0};
+
+
+    //datos del arbol de relaciones
+    vector <vector <char>> id_pieza{
+        {'E'},
+        {},//no hay relaciones de precedencia en los primeros dos productos
+        {},
+        {'E','C'},
+        {'C'},
+        {'C'},
+
+
+    };
+    vector <vector <int>> rel_piezas{
+        {2},
+        {},
+        {},
+        {2,3},
+        {1},
+        {1},
+
+    };
+
+    vector <int> select_TL = {2,4,2,5,3,1};
+    vector <double> S = {0,2909,0,2500,0,0};
+    vector <double> H = {0,0.6,0,0.14,0,0};
+    vector <int> v_poliv = {10000,4000,5000,1000,700,1000};
+
+
+
+    vector <Pieza> vp;
+
+    for (int k=0; k < NBi.size(); ++k) {
+
+        vp.push_back(Pieza(id.at(k),NBi.at(k),Rpi.at(k),  Di.at(k),  SS.at(k),  select_TL.at(k), tSum.at(k), pDef.at(k),  id_pieza.at(k), rel_piezas.at(k),  S.at(k),  H.at(k),  v_poliv.at(k) ));
+
+    }
+
+    vector <Pieza> vp_o = vp_ord(vp);
+
+    vector <Pieza> v_solved;
+
+    v_solved = calc_MRP(vp_o);
+
+    ui->table->setVisible(true);
+    ui->table->setRowCount(v_solved.size());
+    ui->table->setColumnCount(v_solved.begin()->LPP.size());
+    ui->table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+    //int per = -10;
+    int _i = 0;
+    int _j = 0;
+
+
+    for (int i = 0; i < v_solved.size(); ++i) {
+
+        QTableWidgetItem *p; //= ui->table->item(i, j);
+        p = new QTableWidgetItem;
+        QString s;
+        s.append(v_solved.at(i).id);
+        p->setText(s);
+        ui->table->setVerticalHeaderItem(i,p);
+
+        for (int j = 0; j < v_solved.at(i).LPP.size(); ++j) {
+
+                    QTableWidgetItem *pCell;
+                    pCell = new QTableWidgetItem;
+                    pCell->setText(QString::number(v_solved.at(i).LPP.at(j)));
+
+                    ui->table->setItem(i, j, pCell);
+        }
+    }
+
+
+    int per = -10;
+    for (int var = 0; var < v_solved.begin()->LPP.size(); ++var) {
+
+        if (per==0) {
+            per++;
+        }
+
+
+        QTableWidgetItem *p; //= ui->table->item(i, j);
+        p = new QTableWidgetItem;
+        p->setText(QString::number(per));
+        ui->table->setHorizontalHeaderItem(var,p);
+        ui->table->setColumnWidth(var,50);
+        per++;
+
+    }
+
+
+
+}
+
+
+void MainWindow::on_lot_select_activated(int index)
+{
+    switch (index) {
+    case 0:
+        ui->vH->setEnabled(false);
+        ui->vS->setEnabled(false);
+        ui->v_poliv->setEnabled(false);
+        ui->lab_poli->setText("");
+        break;
+    case 1:
+        ui->vH->setEnabled(false);
+        ui->vS->setEnabled(false);
+        ui->v_poliv->setEnabled(true);
+        ui->lab_poli->setText("MIN");
+        break;
+
+    case 2:
+        ui->vH->setEnabled(false);
+        ui->vS->setEnabled(false);
+        ui->v_poliv->setEnabled(true);
+        ui->lab_poli->setText("MULT");
+        break;
+
+    case 3:
+        ui->vH->setEnabled(true);
+        ui->vS->setEnabled(true);
+        ui->v_poliv->setEnabled(false);
+        ui->lab_poli->setText("");
+        break;
+
+    case 4:
+        ui->vH->setEnabled(true);
+        ui->vS->setEnabled(true);
+        ui->v_poliv->setEnabled(false);
+        ui->lab_poli->setText("");
+        break;
+    default:
+        break;
+    }
+}
+
+void MainWindow::on_newP_2_clicked()
+{
+    if (!vp.empty()) {
+        vp.erase(vp.end());
+        this->c_piezas--;
+    }
+    ui->contadorP->setText(QString::number(this->c_piezas));
+}
+
+void MainWindow::on_pushButton_2_clicked()
+{
+    resetValues();
 
 }
