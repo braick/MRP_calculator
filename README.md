@@ -15,3 +15,7 @@ Metos de calculo de lote implementados:
 -Pedido economico
 
 -Periodo optimo
+
+# ScreenShot
+
+![alt text](https://github.com/braick/MRP_calculator/blob/master/screenshots/ScreenShot.PNG?raw=true)
